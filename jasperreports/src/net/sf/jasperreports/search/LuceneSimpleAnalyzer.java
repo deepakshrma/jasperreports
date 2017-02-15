@@ -31,32 +31,32 @@ import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
-import org.apache.lucene.util.Version;
+
+import org.apache.lucene.util.AttributeFactory;
 
 /**
  * @author Narcis Marcu (narcism@users.sourceforge.net)
  */
 public class LuceneSimpleAnalyzer extends Analyzer {
 
-	private Version matchVersion;
 	private boolean isCaseSensitive;
 	private boolean removeAccents;
 
-	public LuceneSimpleAnalyzer(Version matchVersion, boolean isCaseSensitive, boolean removeAccents) {
-		this.matchVersion = matchVersion;
+	public LuceneSimpleAnalyzer(boolean isCaseSensitive, boolean removeAccents) {
 		this.isCaseSensitive = isCaseSensitive;
 //		this.removeAccents = removeAccents;
 		this.removeAccents = true;
 	}
 
 	@Override
-	protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-		Tokenizer source = new WhitespaceTokenizer(matchVersion, reader);
+	protected TokenStreamComponents createComponents(String fieldName) {
+		AttributeFactory factory = AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY;
+		Tokenizer source = new WhitespaceTokenizer(factory);
 		TokenStream result = source;
 
 		if (!isCaseSensitive) {
 			// lowercase tokens
-			result = new LowerCaseFilter(matchVersion, source);
+			result = new LowerCaseFilter(source);
 		}
 
 		if (removeAccents) {
